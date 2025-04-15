@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Sektor7-Evasion Windows RTOps笔记 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Modern Detection Techendpoint protection EDR: Endpoint Detection and Response moniter operating system: network process, file activities… inject their code into other process, hook apis, hide in syste">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sektor7-Evasion Windows RTOps笔记">
+<meta property="og:url" content="http://example.com/2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Modern Detection Techendpoint protection EDR: Endpoint Detection and Response moniter operating system: network process, file activities… inject their code into other process, hook apis, hide in syste">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-07-25T02:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-15T13:45:53.411Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="evasion">
+<meta property="article:tag" content="note">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../../../atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="../../../../favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="../../../../css/style.css">
+
+  
+    
+<link rel="stylesheet" href="../../../../fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../../index.html" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="../../../../index.html">Home</a>
+        
+          <a class="main-nav-link" href="../../../../archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="../../../../atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Sektor7-Evasion Windows RTOps笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2023-07-25T02:00:00.000Z" itemprop="datePublished">2023-07-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="../../../../categories/blog/">blog</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Sektor7-Evasion Windows RTOps笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Modern-Detection-Tech"><a href="#Modern-Detection-Tech" class="headerlink" title="Modern Detection Tech"></a>Modern Detection Tech</h2><p>endpoint protection</p>
+<p>EDR: Endpoint Detection and Response</p>
+<p>moniter operating system: network process, file activities…</p>
+<p>inject their code into other process, hook apis, hide in system, moniter users’ activities</p>
+<p>composed of 2 components: EDR service in user space, EDR driver in kernel space</p>
+<p>user space: logging</p>
+<p>kernel space: disk, network, kernel callbacks</p>
+<p>when detect process creation, edr inject monitering dll that sets hooks on specific functions</p>
+<h2 id="Evasion-Development-Rules"><a href="#Evasion-Development-Rules" class="headerlink" title="Evasion Development Rules"></a>Evasion Development Rules</h2><p>considerations: depend on prvlg, keep env offline, bypass development vs testing, perform attacks vs observable detections, decision paths?</p>
+<p>candos: disable agent, disrupt comms, exploit blind spots, blend in</p>
+<p>course env: AV - BitDefender, Monitoring - Sysmon</p>
+<h2 id="Binary-Entropy"><a href="#Binary-Entropy" class="headerlink" title="Binary Entropy"></a>Binary Entropy</h2><p>Obfuscation &amp; Encryption vs Enrtopy</p>
+<p>entropy used by epp or edr to detect</p>
+<p>represent string using byte array</p>
+<p>encoding</p>
+<p>quickfix: cat other file behind it</p>
+<h2 id="Module-Details"><a href="#Module-Details" class="headerlink" title="Module Details"></a>Module Details</h2><p>image details-property of file</p>
+<p>tool: resource hacker</p>
+<p>compile using rc</p>
+<h2 id="Binary-Signature"><a href="#Binary-Signature" class="headerlink" title="Binary Signature"></a>Binary Signature</h2><p>digital signature, certificate</p>
+<p>how to sign: certificate issued for co-signing, leaked certificate</p>
+<p>generate self signed cer and sign binary: makecert -&gt; signtool</p>
+<h2 id="Intro-Process-Unhooking"><a href="#Intro-Process-Unhooking" class="headerlink" title="Intro Process Unhooking"></a>Intro Process Unhooking</h2><p>trans from user mode to kernel mode: syscall</p>
+<p>tool: processhacker</p>
+<p>step: x64dbg-&gt;ntdll-&gt;func-&gt;not syscall-&gt;go to some address-&gt;processhacker-&gt;memory-&gt;find the type of the memory and which file use it-&gt;discover dll of bitdefender</p>
+<p>check RX memory</p>
+<p>if a memory is not likely to be some code, dump it to see if it’s meaningful as data</p>
+<h2 id="Hooks-vs-Code-Injections"><a href="#Hooks-vs-Code-Injections" class="headerlink" title="Hooks vs Code Injections"></a>Hooks vs Code Injections</h2><p>check RX memory of notepad(inject target) to find shellcode</p>
+<p>step: enable bitdefender-&gt;start injetction-&gt;some func of ntdll of implant gets hooked by bitdefender-&gt;implant and notepad get killed-&gt;the file of implant get removed</p>
+<h2 id="Process-Unhooking-Classic"><a href="#Process-Unhooking-Classic" class="headerlink" title="Process Unhooking Classic"></a>Process Unhooking Classic</h2><p>map a copy of  ntdll from disk to overwrite the one which is hooked by edr in memory</p>
+<h2 id="Hooks-vs-Hells-Gate"><a href="#Hooks-vs-Hells-Gate" class="headerlink" title="Hooks vs Hells Gate"></a>Hooks vs Hells Gate</h2><p>use system call directly-&gt;but system call number change with windows release-&gt;dynamically detect windows version-&gt;hells gate(find syscall number without redundent code)</p>
+<p>hells gate: use only ntdll</p>
+<p>hells gate step: find ImageExportDirectory-&gt;find func name using hash-&gt;get its address-&gt;find the “mov r10, rcx    mov rcx, &lt;syscall_number&gt;“-&gt;extract syscall number-&gt;use some asm to call</p>
+<p>hells gate fail to pass bitdefender for it cant find the “…” pattern at the step above</p>
+<h2 id="Hooks-vs-Halo-Gate"><a href="#Hooks-vs-Halo-Gate" class="headerlink" title="Hooks vs Halo Gate"></a>Hooks vs Halo Gate</h2><p>halo gate is a patch to hells gate</p>
+<p>halo gate will resolve syscall number dynamically with hooks set</p>
+<p>based on: not all func is hooked, syscall number increase linearly by func order</p>
+<h2 id="Process-Unhooking-Peruns-Fart"><a href="#Process-Unhooking-Peruns-Fart" class="headerlink" title="Process Unhooking Peruns Fart"></a>Process Unhooking Peruns Fart</h2><p>get a fresh ntdll without touching disk to overwrite the hooked one</p>
+<p>get ntdll from other memory when spawning a new process at which point hooks is not set(between suspended and resume) </p>
+<p>copy clean “syscall table” into ntdll memory</p>
+<h2 id="Silencing-Process-Event-Tracing"><a href="#Silencing-Process-Event-Tracing" class="headerlink" title="Silencing Process Event Tracing"></a>Silencing Process Event Tracing</h2><p>Event Tracing for Windows (ETW) : kernel level tracing facility, log kernel or app defined events to a log file</p>
+<p>ETW API compoments: Controllers (start and stop event tracing session and enable providers), Providers (provide events), Consumers (consume events)</p>
+<p>event tracing sessions consist of a set of buffers, which can be read realtime or into files</p>
+<p>ETW does not guarantee capture all events</p>
+<p>tool: logman, tracerpt</p>
+<p>^+ how ETW is powerful</p>
+<p>disable ETW: patch etw related func in ntdll</p>
+<h2 id="Module-Stomping"><a href="#Module-Stomping" class="headerlink" title="Module Stomping"></a>Module Stomping</h2><p>replace contents of .text section with payload in a victim dll to avoid suspicious memory (used by no one and is RWX) and calling stack (originated from some unknown address) </p>
+<h2 id="No-New-Thread-Payload-Execution"><a href="#No-New-Thread-Payload-Execution" class="headerlink" title="No New Thread Payload Execution"></a>No New Thread Payload Execution</h2><p>thread creation is visible on the kernel level</p>
+<p>edr can detect thread creation event when hooks are removed</p>
+<p>principle: hijack an existing thread</p>
+<p>step: call the address of payload as a func directly</p>
+<p>shortcoming: after execution, main thread may gets killed or hang in the memory, and process become a zombie</p>
+<p>other method: call a win func which will take the address of payload as a callback func</p>
+<h2 id="Classic-PPID-Spoofing"><a href="#Classic-PPID-Spoofing" class="headerlink" title="Classic PPID Spoofing"></a>Classic PPID Spoofing</h2><p>PPID &#x3D; Parent Process ID</p>
+<p>change parent of a new process</p>
+<p>edr rely on parent_child relationship -&gt; break the relation to avoid detection</p>
+<p>use win’s built in functionality</p>
+<p>its legitimate use: user accoutn control (UAC) </p>
+<p>e.g. : a user wants to run a program with elevated privileges, the Application Infromation Service running under svchost will launch the elevated process with a spoofed parent (original caller), so that a new process is approperly attached to the original caller in the process tree</p>
+<p>step: when creating a new process, specify some attribute of STARTUPINFO</p>
+<h2 id="Changing-Parents-Scheduler"><a href="#Changing-Parents-Scheduler" class="headerlink" title="Changing Parents Scheduler"></a>Changing Parents Scheduler</h2><p>task scheduler</p>
+<p>cmd: schetasks</p>
+<p>task will be spawned by the Schedule service in the svchost</p>
+<p>dont use cmdline, cuz easy to detect, should use win api interface</p>
+<p>utilizing a COM interface to get to the task scheduler, and calls are made by invoking object methods</p>
+<p>step: init a COM library, get task scheduler interface, create new task which is an object and has some fields and methds, set task parameters, set flags, get persistfile object, save the configuration to disk, run the task, process will get executed as child of svchost process</p>
+<p>COM is basically a bunch of dlls</p>
+<h2 id="Changing-Parents-Emotet-Method"><a href="#Changing-Parents-Emotet-Method" class="headerlink" title="Changing Parents Emotet Method"></a>Changing Parents Emotet Method</h2><p>Wmi</p>
+<p>tool: wmic (used by one of the attacks of emotet malware family) </p>
+<p>step: init COM library, set COM security levels to call wmi interface, get the initial locator to wmi, connect to the local root\cimv2 namespace and obtain pointer pSvc tp make IWbemServices calls, set security leavels for the proxy, use the IWbemServices pointer to make requests of wmi and set up to call the Win32_Process::Create method, create and store the values for in parameters, execute method</p>
+<p>process will be executed as a child of WmiPrvSE of svchost</p>
+<h2 id="Cmdline-Arguments-Spoofing"><a href="#Cmdline-Arguments-Spoofing" class="headerlink" title="Cmdline Arguments Spoofing"></a>Cmdline Arguments Spoofing</h2><p>step; start a new process suspended, retrieve infomation on PEB location in process, read the PEB from the target process, grab the ProcessParameters from PEB, set the actual arguments (the string should be shorter than the orginal one) , update the CommandLine length to hide arguments, resume the process</p>
+<p>tool; process explorer</p>
+<h2 id="Binding-Eventlog-2"><a href="#Binding-Eventlog-2" class="headerlink" title="Binding Eventlog 2"></a>Binding Eventlog 2</h2><p>EventLog is service in svchost</p>
+<p>tool: Event Viewer, Local Security Policy</p>
+<p>step: get function pointers, talk to Service Manager to find Eventlog process, get PID of svchost.exe that hosts EventLog service, open svchost.exe containing EventLog, get snapshot of all threads, parse the snapshot and search for threads belonging to EventLog, found the one from svchost.exe containing EventLog, search for subProcessTag assigned to EventLog, check if svchost.exe is 32_ or 64_bit (offset in TEB is different for each arch) , read subProcessTag value from TEB of svchost.exe, suspend those threads</p>
+<p>to do anything about system service need high privileges	</p>
+<h2 id="Blocking-EPP-Comms-Listing-Connections"><a href="#Blocking-EPP-Comms-Listing-Connections" class="headerlink" title="Blocking EPP Comms-Listing Connections"></a>Blocking EPP Comms-Listing Connections</h2><p>disrupt communicaton to stop the information being sent out by edr or av</p>
+<p>figure out these tcp connections</p>
+<p>tool: netstat</p>
+<p>another method: </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic /namespace:\\root\StandardCIMv2 path msft_nettcpconnection get Localaddress,localport,remoteaddress,remoteport,owningprocess</span><br></pre></td></tr></table></figure>
+
+<p>but want to avoid any command line tool</p>
+<p>do the same thing using win api</p>
+<p>step: init COM library, set COM security levels, get init locator to WMI, connect to the local root\cimv2 namespace and obtain pointer pSvc to make IWbemServices calls, set security levels to the proxy, class to target: MSFT_NetTCPConnection, create an Enumerator object to list of instance of MSFT_NetTCPConnection, get the related  values of connections</p>
+<p>need local admin privileges to block those connnections </p>
+<h2 id="Blocking-EPP-Comms-Firewall"><a href="#Blocking-EPP-Comms-Firewall" class="headerlink" title="Blocking EPP Comms-Firewall"></a>Blocking EPP Comms-Firewall</h2><p>tool: Windows Defender Firewall with Advanced Security</p>
+<p>target outbound rules</p>
+<p>create a rule to block bitdefender process specifiacally</p>
+<p>step: init COM library, load NetFwPolicy2 COM, retrieve FW rules, create a new Firewall Rule object, set new FW rule to block bitdefender program (or to block all the related remote address) , add the Firewall Rule</p>
+<h2 id="Blocking-EPP-Comms-Routing-Table"><a href="#Blocking-EPP-Comms-Routing-Table" class="headerlink" title="Blocking EPP Comms-Routing Table"></a>Blocking EPP Comms-Routing Table</h2><p>check routing table</p>
+<p>tool: route</p>
+<p>another method:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic path Win32_ip4routetable get</span><br></pre></td></tr></table></figure>
+
+<p>or full command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic /namespace:\\root\cimv2 path Win32_ip4routetable get</span><br></pre></td></tr></table></figure>
+
+<p>use iphlpapi library this time</p>
+<p>step: vars used for GetIpForwardTable, allocate some space on a heap for routing table, get contents of routing table and resize if buffer too small, retrieve routing table</p>
+<h2 id="Blocking-EPP-Comms-Routing"><a href="#Blocking-EPP-Comms-Routing" class="headerlink" title="Blocking EPP Comms-Routing"></a>Blocking EPP Comms-Routing</h2><p>change routing table</p>
+<p>step: create a ipforward row, set destination address and mask, set next_hop to some bogus address, set interface index (1 &#x3D;&#x3D; loopback) and proto, create a ip forward entry</p>
+<p>need admin privileges</p>
+<p>careful: may cut off c2 channel if some dns is blocked</p>
+<h2 id="Dancing-with-Sysmon-Detection"><a href="#Dancing-with-Sysmon-Detection" class="headerlink" title="Dancing with Sysmon-Detection"></a>Dancing with Sysmon-Detection</h2><p>how to see if the sysmon is runing</p>
+<p>powershell: </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Get-Process</span> | <span class="built_in">Where-Object</span> &#123; <span class="variable">$_</span>.ProcessName <span class="operator">-eq</span> <span class="string">&quot;Sysmon&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Get-CimInstance</span> win32_service <span class="literal">-Filter</span> <span class="string">&quot;Description = &#x27;System Monitor service&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Get-Process</span> | <span class="built_in">Where-Object</span> &#123; <span class="variable">$_</span>.DisplayName <span class="operator">-like</span> <span class="string">&quot;sys*&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query <span class="string">&quot;HKCU\Software\Sysinternals\System Monitor&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query <span class="string">&quot;HKCU\Software\Sysinternals&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>cmd:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logman query provider | findstr /i sysm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logman query providers | findstr /i sys</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fltmc</span><br></pre></td></tr></table></figure>
+
+<p>fltmc - altitude of sysmon can be changed</p>
+<p>-&gt; query reg:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft<span class="literal">-Windows-Sysmon</span>/Operational</span><br></pre></td></tr></table></figure>
+
+<p>may get a OwningPublsher guid {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}</p>
+<p>-&gt; query reg:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\&#123;xxxxxxxx<span class="literal">-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>&#125;\ChannelReferences</span><br></pre></td></tr></table></figure>
+
+<p>get name</p>
+<p>-&gt; use logman:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logman query providers &#123;xxxxxxxx<span class="literal">-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>-&gt; get a PID -&gt; tasklist</p>
+<p>just know the service name, the name of the driver is still unknown</p>
+<p>-&gt; query reg:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query <span class="string">&quot;HKLM\SYSTEM\CurrentControlSet\Services\xxxx\Parameters&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>get subkey - drivername</p>
+<p>if high privilege gained, use directly:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fltmc instances</span><br></pre></td></tr></table></figure>
+
+<p>use winapi:</p>
+<p>step: get WINEVT channels key, search for Sysmon guid, get provider name, get all processes registered to the provider</p>
+<p>step (with high privileges): enumerate all minifilters, print relevant information</p>
+<h2 id="Dancing-with-Sysmon-Killem"><a href="#Dancing-with-Sysmon-Killem" class="headerlink" title="Dancing with Sysmon-Killem"></a>Dancing with Sysmon-Killem</h2><p>admin privileges:</p>
+<p>sysmon is not hardened against local admin</p>
+<p>config can be changed easily</p>
+<p>get info about it:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query <span class="string">&quot;HKLM\SYSTEM\CurrentControlSet\Services\drivername\Parameters&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>unload driver of sysmon to remove the kernel part of it:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fltmc unload</span><br></pre></td></tr></table></figure>
+
+<p>step: SetPrivilege(SE_LOAD_DRIVER_NAME, ENABLE), FilterUnload(L”xxxx”)</p>
+<p>but some error is logged (Event Viewer)</p>
+<p>kill the sysmon</p>
+<p>change the altitude of minifilter (driver) of sysmon into some altitude that has been occupied:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query <span class="string">&quot;HKLM\SYSTEM\CurrentControlSet\Services\drivername\Instances\Sysmon Instance&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add <span class="string">&quot;HKLM\SYSTEM\CurrentControlSet\Services\drivername\Instances\Sysmon Instance&quot;</span> /v Altitude /t REG<span class="literal">-SZ</span> /d <span class="number">320832</span> /f</span><br></pre></td></tr></table></figure>
+
+<p>reboot</p>
+<p>error log: failed to access the driver</p>
+<h2 id="Dancing-with-Sysmon-Silent-Gag"><a href="#Dancing-with-Sysmon-Silent-Gag" class="headerlink" title="Dancing with Sysmon-Silent Gag"></a>Dancing with Sysmon-Silent Gag</h2><p>nothing will be logged</p>
+<p>step: open target process (sysmon) , get address of EtwEventWrite in ntdll and patch it</p>
+<h2 id="Evasion-Decision-Tree"><a href="#Evasion-Decision-Tree" class="headerlink" title="Evasion Decision Tree"></a>Evasion Decision Tree</h2><table>
+<thead>
+<tr>
+<th>Pre-execution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Obfuscatoin</td>
+</tr>
+<tr>
+<td>Encryption</td>
+</tr>
+<tr>
+<td>Entropy</td>
+</tr>
+<tr>
+<td>Image Details</td>
+</tr>
+<tr>
+<td>Binary Signature</td>
+</tr>
+<tr>
+<td>Sandbox Evasion</td>
+</tr>
+</tbody></table>
+<p>if we touch the disk, principle: make it like normal binary</p>
+<table>
+<thead>
+<tr>
+<th>Post-execution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><u>Process clean-up:</u></td>
+</tr>
+<tr>
+<td>Hooks removal</td>
+</tr>
+<tr>
+<td>Native API</td>
+</tr>
+<tr>
+<td>Patching ETW</td>
+</tr>
+<tr>
+<td>Patching AMSI</td>
+</tr>
+<tr>
+<td>Unloading AV&#x2F;EDR DLL</td>
+</tr>
+</tbody></table>
+<p>regardless of the privileges</p>
+<p>if running with high privs:</p>
+<table>
+<thead>
+<tr>
+<th>Post-execution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><u>High Privs?</u></td>
+</tr>
+<tr>
+<td>EPP communications disruption</td>
+</tr>
+<tr>
+<td>Disabling Eventlog</td>
+</tr>
+<tr>
+<td>Disabling ETW</td>
+</tr>
+<tr>
+<td>Disabling AV&#x2F;EDR</td>
+</tr>
+<tr>
+<td>AV&#x2F;EDR unload</td>
+</tr>
+<tr>
+<td>AV&#x2F;EDR uninstall</td>
+</tr>
+</tbody></table>
+<p>if running without local admin privs:</p>
+<table>
+<thead>
+<tr>
+<th>Post execution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><u>Low Privs?</u></td>
+</tr>
+<tr>
+<td>Bypassig detection rules</td>
+</tr>
+<tr>
+<td>Module stomping</td>
+</tr>
+<tr>
+<td>Executing code w&#x2F;o new thread</td>
+</tr>
+<tr>
+<td>PPID spoofing</td>
+</tr>
+<tr>
+<td>Cmdline args spoofing</td>
+</tr>
+<tr>
+<td>Remote process clean-up before injection</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/" data-id="cm9ilnvam0000vsi70mylem2c" data-title="Sektor7-Evasion Windows RTOps笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/evasion/" rel="tag">evasion</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/windows/" rel="tag">windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../../../2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Writeup-RealWorldCTF2024-The-truth-of-Plain
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../../../2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">堆攻击笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/blog/">blog</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Crypto/" rel="tag">Crypto</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Misc/" rel="tag">Misc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/env-build/" rel="tag">env_build</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/evasion/" rel="tag">evasion</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/heap/" rel="tag">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/model-train/" rel="tag">model_train</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/paper-note/" rel="tag">paper_note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/pose-estimation/" rel="tag">pose_estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ptmalloc/" rel="tag">ptmalloc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/rwctf2024/" rel="tag">rwctf2024</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/transformer/" rel="tag">transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/writeup/" rel="tag">writeup</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="../../../../tags/Crypto/" style="font-size: 10px;">Crypto</a> <a href="../../../../tags/Misc/" style="font-size: 10px;">Misc</a> <a href="../../../../tags/ctf/" style="font-size: 10px;">ctf</a> <a href="../../../../tags/debug/" style="font-size: 10px;">debug</a> <a href="../../../../tags/env-build/" style="font-size: 10px;">env_build</a> <a href="../../../../tags/evasion/" style="font-size: 10px;">evasion</a> <a href="../../../../tags/heap/" style="font-size: 10px;">heap</a> <a href="../../../../tags/kernel/" style="font-size: 10px;">kernel</a> <a href="../../../../tags/linux/" style="font-size: 10px;">linux</a> <a href="../../../../tags/model-train/" style="font-size: 10px;">model_train</a> <a href="../../../../tags/note/" style="font-size: 20px;">note</a> <a href="../../../../tags/paper-note/" style="font-size: 10px;">paper_note</a> <a href="../../../../tags/pose-estimation/" style="font-size: 10px;">pose_estimation</a> <a href="../../../../tags/ptmalloc/" style="font-size: 10px;">ptmalloc</a> <a href="../../../../tags/rwctf2024/" style="font-size: 10px;">rwctf2024</a> <a href="../../../../tags/transformer/" style="font-size: 10px;">transformer</a> <a href="../../../../tags/windows/" style="font-size: 10px;">windows</a> <a href="../../../../tags/writeup/" style="font-size: 10px;">writeup</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/06/">June 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2022/10/">October 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../../2024/06/01/%E5%AE%89%E8%A3%85bcc%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">安装bcc和bpftrace踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/04/25/%E8%AE%AD%E7%BB%83%E7%BB%8F%E9%AA%8C%E6%91%98%E5%BD%95%20996efa07914a43b68886a10868d83e1d/">训练经验摘录</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/03/23/ViTPose%E7%AC%94%E8%AE%B0/">ViTPose笔记</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/">Writeup-RealWorldCTF2024-The-truth-of-Plain</a>
+          </li>
+        
+          <li>
+            <a href="">Sektor7-Evasion Windows RTOps笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../../js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="../../../../fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>堆攻击笔记 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="堆分配堆是动态分配的内存，程序可以按需请求和释放 堆是全局的内存，程序中的任何部分都可以访问和修改它 堆内存在程序内存中的位置：  stdlib.h提供标准库函数用于访问、修改和管理动态内存，常用的函数是 malloc和 free malloc和free函数 这些标准库提供的函数基于操作系统之上，用于高效地管理堆内存 malloc使用系统调用 brk和 mmap来获取内存 brk通过增加 prog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="堆攻击笔记">
+<meta property="og:url" content="http://example.com/2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="堆分配堆是动态分配的内存，程序可以按需请求和释放 堆是全局的内存，程序中的任何部分都可以访问和修改它 堆内存在程序内存中的位置：  stdlib.h提供标准库函数用于访问、修改和管理动态内存，常用的函数是 malloc和 free malloc和free函数 这些标准库提供的函数基于操作系统之上，用于高效地管理堆内存 malloc使用系统调用 brk和 mmap来获取内存 brk通过增加 prog">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/linuxFlexibleAddressSpaceLayout.png">
+<meta property="article:published_time" content="2022-10-21T02:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-15T13:57:10.038Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="heap">
+<meta property="article:tag" content="ptmalloc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/linuxFlexibleAddressSpaceLayout.png">
+  
+    <link rel="alternate" href="../../../../atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="../../../../favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="../../../../css/style.css">
+
+  
+    
+<link rel="stylesheet" href="../../../../fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../../index.html" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="../../../../index.html">Home</a>
+        
+          <a class="main-nav-link" href="../../../../archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="../../../../atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-堆攻击笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2022-10-21T02:00:00.000Z" itemprop="datePublished">2022-10-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="../../../../categories/blog/">blog</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      堆攻击笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="堆分配"><a href="#堆分配" class="headerlink" title="堆分配"></a>堆分配</h2><p>堆是动态分配的内存，程序可以按需请求和释放</p>
+<p>堆是全局的内存，程序中的任何部分都可以访问和修改它</p>
+<p>堆内存在程序内存中的位置：</p>
+<p><img src="/2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/linuxFlexibleAddressSpaceLayout.png"></p>
+<p><code>stdlib.h</code>提供标准库函数用于访问、修改和管理动态内存，常用的函数是 <code>malloc</code>和 <code>free</code></p>
+<p><a href="#malloc">malloc和free函数</a></p>
+<p>这些标准库提供的函数基于操作系统之上，用于高效地管理堆内存</p>
+<p><code>malloc</code>使用系统调用 <code>brk</code>和 <code>mmap</code>来获取内存</p>
+<p><code>brk</code>通过增加 program break (brk) 从内核获取内存（非零初始化）</p>
+<p>最初，堆段的开始（start_break）和结束（brk）指向同一位置</p>
+<p><code>mmap</code>用于创建私有匿名映射段，私有匿名映射的主要目的是分配新的内存（零填充），这个新的内存将由调用进程专门使用</p>
+<h2 id="Chunk"><a href="#Chunk" class="headerlink" title="Chunk"></a>Chunk</h2><p>堆块</p>
+<p>分配的堆块：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Size of previous chunk, <span class="keyword">if</span> <span class="title function_">unallocated</span> <span class="params">(P clear)</span>  |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Size of chunk, in bytes                     |A|M|P|</span><br><span class="line">      mem-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             User data starts here...                          .</span><br><span class="line">            .                                                               .</span><br><span class="line">            .             <span class="params">(malloc_usable_size() bytes)</span>                      .</span><br><span class="line">            .                                                               |</span><br><span class="line">nextchunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             <span class="params">(size of chunk, but used <span class="keyword">for</span> application data)</span>    |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Size of next chunk, in bytes                |A|0|1|</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
+
+<p>空闲的堆块：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Size of previous chunk, <span class="keyword">if</span> <span class="title function_">unallocated</span> <span class="params">(P clear)</span>  |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">    `head:&#x27; |             Size of chunk, in bytes                     |A|0|P|</span><br><span class="line">      mem-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Forward pointer to next chunk in <span class="built_in">list</span>             |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Back pointer to previous chunk in <span class="built_in">list</span>            |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Unused <span class="title function_">space</span> <span class="params">(may be <span class="number">0</span> bytes <span class="type">long</span>)</span>                .</span><br><span class="line">            .                                                               .</span><br><span class="line">            .                                                               |</span><br><span class="line">nextchunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">    `foot:&#x27; |             Size of chunk, in bytes                           |</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">            |             Size of next chunk, in bytes                |A|0|0|</span><br><span class="line">            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
+
+<p>由于堆块都是alignment（通常为8或16字节）对齐的，所以表示堆块大小的size的最低3bit可用于标志位</p>
+<p><strong>P (PREV_INUSE)</strong>: 0 当前一个堆块 (不是链表中的前一个，是内存相邻的前一个) 空闲时 (因此前一个堆块的大小被存储在第一项). </p>
+<p>The very first chunk allocated has this bit set. If it is 1, then we cannot determine the size of the previous chunk.</p>
+<p><strong>M (IS_MMAPPED)</strong>: 堆块通过 <code>mmap</code>获得的. 其他两个标志位可以忽略.</p>
+<p> <code>mmapped</code> chunks are neither in an arena, not adjacent to a free chunk.</p>
+<p><strong>A (NON_MAIN_ARENA)</strong>: 0 for chunks in the main arena. Each thread spawned receives its own arena and for those chunks, this bit is set.</p>
+<p>空闲堆块处于一个循环双链表中</p>
+<p>在fastbin中的堆块被当作已分配的堆块，因为它们没有与邻近的空闲块合并</p>
+<p><a href="#malloc_chunk">堆块的数据结构</a></p>
+<h2 id="Arena"><a href="#Arena" class="headerlink" title="Arena"></a>Arena</h2><p>Arena是堆的内部数据结构，包括控制信息、bins和特殊堆块等</p>
+<p><code>malloc_state</code>表示一个arena头部的细节</p>
+<p><a href="#malloc_state">malloc_state数据结构</a></p>
+<p>主线程的arena是一个全局变量，并不是堆段的一部分；其他线程的arena头本身存储在堆段中</p>
+<p>非主线程的arena可以有多个相关的堆（这里的堆指的是用到的内部结构而非堆段）</p>
+<h2 id="Bin"><a href="#Bin" class="headerlink" title="Bin"></a>Bin</h2><p>一个bin是一个由空闲堆块组成的链表（单向或双向）</p>
+<p>根据它们包含的堆块大小区分bin：</p>
+<ol>
+<li><p>Fast bin</p>
+</li>
+<li><p>Unsorted bin</p>
+</li>
+<li><p>Small bin</p>
+</li>
+<li><p>Large bin</p>
+</li>
+</ol>
+<p>维持fastbin<strong>s</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span> *<span class="title">mfastbinptr</span>;</span></span><br><span class="line"></span><br><span class="line">mfastbinptr fastbinsY[]; <span class="comment">// Array of pointers to chunks</span></span><br></pre></td></tr></table></figure>
+
+<p>用一个数组维持unsorted, small和large bin<strong>s</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">mchunkptr</span>;</span></span><br><span class="line"></span><br><span class="line">mchunkptr bins[]; <span class="comment">// Array of pointers to chunks</span></span><br></pre></td></tr></table></figure>
+
+<p>最初，初始化时small和large bins是空的</p>
+<p>每个bin由bins数组中的两个值表示，第一个是指向bin链表头部的指针，第二个是指向bin链表尾部的指针。对于fastbins（bin是单向链表），第二个值是NULL</p>
+<h3 id="fast-bins"><a href="#fast-bins" class="headerlink" title="fast bins"></a>fast bins</h3><p>有10个fast bin，每个bin维持一个单向链表，插入和删除操作发生在链表前部（front）（LIFO方式）</p>
+<p>每个bin的堆块大小相同，分别是：16, 24, 32, 40, 48, 56, 64, 72, 80, 88字节（包括控制信息）</p>
+<p>两个内存连续的空闲快堆块不会聚合</p>
+<h3 id="unsorted-bin"><a href="#unsorted-bin" class="headerlink" title="unsorted bin"></a>unsorted bin</h3><p>只有1个unsorted bin</p>
+<p>释放时，小型和大型堆块进入这个bin</p>
+<p>这个bin的主要目的是作为一个缓存层，加速分配和释放请求</p>
+<h3 id="small-bins"><a href="#small-bins" class="headerlink" title="small bins"></a>small bins</h3><p>有62个small bin</p>
+<p>small bins比large bins快，慢于fastbins</p>
+<p>每个bin维持一个双向链表，头插入，尾删除（FIFO方式）</p>
+<p>每个bin的堆块大小相同，分别是：16, 24, …, 504字节（spacing为8）</p>
+<p>释放时，小堆块在进入unsorted bin之前可能聚合</p>
+<h3 id="large-bins"><a href="#large-bins" class="headerlink" title="large bins"></a>large bins</h3><p>有63个large bin</p>
+<p>每个bin维持一个双向链表</p>
+<p>一个特殊的bin有不同大小的堆块，降序排列（最大的堆块在头部，最小的在尾部），可在任意位置插入和删除</p>
+<p>spacing阶梯式增加</p>
+<p>释放时，大堆块在进入unsorted bin之前可能聚合</p>
+<p>spacing总结：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">No. of Bins       Spacing between bins</span><br><span class="line"></span><br><span class="line">64 bins of size       8  [ Small bins]</span><br><span class="line">32 bins of size      64  [ Large bins]</span><br><span class="line">16 bins of size     512  [ Large bins]</span><br><span class="line">8 bins of size     4096  [ ..        ]</span><br><span class="line">4 bins of size    32768</span><br><span class="line">2 bins of size   262144</span><br><span class="line">1 bin  of size what&#x27;s left</span><br></pre></td></tr></table></figure>
+
+<h3 id="特殊堆块"><a href="#特殊堆块" class="headerlink" title="特殊堆块"></a>特殊堆块</h3><h4 id="top-chunk"><a href="#top-chunk" class="headerlink" title="top chunk"></a>top chunk</h4><p>这个堆块和arena的顶部相邻</p>
+<p>服务于 <code>malloc</code>请求时，top chunk是最后的选择</p>
+<p>如果还需要更多的大小，它能通过系统调用 <code>sbrk</code>增长</p>
+<p>它的<code>PREV_INUSE</code>标志位为1</p>
+<h4 id="last-remainder-chunk"><a href="#last-remainder-chunk" class="headerlink" title="last remainder chunk"></a>last remainder chunk</h4><p>是从最后一次分离堆块获得的</p>
+<p>当请求的内存大小没有一个正好的堆块能匹配时，更大的堆块就会被一分为二，一部分返回给用户，另一部分变为last remainder chunk</p>
+<h2 id="内存分配器"><a href="#内存分配器" class="headerlink" title="内存分配器"></a>内存分配器</h2><ul>
+<li>dlmalloc – General purpose allocator</li>
+<li><strong>ptmalloc2 – glibc</strong></li>
+<li>jemalloc – FreeBSD and Firefox</li>
+<li>tcmalloc – Google</li>
+<li>libumem – Solaris</li>
+</ul>
+<h2 id="ptmalloc堆管理"><a href="#ptmalloc堆管理" class="headerlink" title="ptmalloc堆管理"></a>ptmalloc堆管理</h2><h3 id="空闲chunk管理"><a href="#空闲chunk管理" class="headerlink" title="空闲chunk管理"></a>空闲chunk管理</h3><p>分箱式：</p>
+<p>首先，它会根据空闲的 chunk 的<strong>大小</strong>以及<strong>使用状态</strong>将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。每类中仍然有更细的划分，相似大小的 chunk 会用双向链表链接起来。也就是说，在每类 bin 的内部仍然会有多个互不相关的链表来保存不同大小的 chunk。</p>
+<p>对于 small bins，large bins，unsorted bin 来说，ptmalloc 将它们维护在同一个数组中。这些 bin 对应的数据结构在 malloc_state 中，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> NBINS 128</span></span><br><span class="line"><span class="comment">/* Normal bins packed as described above */</span></span><br><span class="line">mchunkptr bins[ NBINS * <span class="number">2</span> - <span class="number">2</span> ];</span><br></pre></td></tr></table></figure>
+
+<p>数组中的 bin 依次如下</p>
+<ol>
+<li>第一个为 unsorted bin，字如其面，这里面的 chunk 没有进行排序，存储的 chunk 比较杂。</li>
+<li>索引从 2 到 63 的 bin 称为 small bin，同一个 small bin 链表中的 chunk 的大小相同。两个相邻索引的 small bin 链表中的 chunk 大小相差的字节数为 <strong>2 个机器字长</strong>，即 32 位相差 8 字节，64 位相差 16 字节。</li>
+<li>small bins 后面的 bin 被称作 large bins。large bins 中的每一个 bin 都包含一定范围内的 chunk，其中的 chunk 按 fd 指针的顺序从大到小排列。相同大小的 chunk 同样按照最近使用顺序排列。</li>
+</ol>
+<p>此外，上述这些 bin 的排布都会遵循一个原则：<strong>任意两个物理相邻的空闲 chunk 不能在一起</strong>。</p>
+<p>需要注意的是，并不是所有的 chunk 被释放后就立即被放到 bin 中。ptmalloc 为了提高分配的速度，会把一些小的 chunk <strong>先</strong>放到 fast bins 的容器内。<strong>而且，fastbin 容器中的 chunk 的使用标记总是被置位的，所以不满足上面的原则。</strong></p>
+<h2 id="数据结构和函数"><a href="#数据结构和函数" class="headerlink" title="数据结构和函数"></a>数据结构和函数</h2><h3 id="INTERNAL-SIZE-T"><a href="#INTERNAL-SIZE-T" class="headerlink" title="INTERNAL_SIZE_T"></a><code>INTERNAL_SIZE_T</code></h3><p>默认等同于 <code>size_t</code>，32位下为4字节，64位下为8字节</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* INTERNAL_SIZE_T is the word-size used for internal bookkeeping of</span></span><br><span class="line"><span class="comment">   chunk sizes.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   The default version is the same as size_t.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   While not strictly necessary, it is best to define this as an</span></span><br><span class="line"><span class="comment">   unsigned type, even if size_t is a signed type. This may avoid some</span></span><br><span class="line"><span class="comment">   artificial size limitations on some systems.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   On a 64-bit machine, you may be able to reduce malloc overhead by</span></span><br><span class="line"><span class="comment">   defining INTERNAL_SIZE_T to be a 32 bit `unsigned int&#x27; at the</span></span><br><span class="line"><span class="comment">   expense of not being able to handle more than 2^32 of malloced</span></span><br><span class="line"><span class="comment">   space. If this limitation is acceptable, you are encouraged to set</span></span><br><span class="line"><span class="comment">   this unless you are on a platform requiring 16byte alignments. In</span></span><br><span class="line"><span class="comment">   this case the alignment requirements turn out to negate any</span></span><br><span class="line"><span class="comment">   potential advantages of decreasing size_t word size.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   Implementors: Beware of the possible combinations of:</span></span><br><span class="line"><span class="comment">     - INTERNAL_SIZE_T might be signed or unsigned, might be 32 or 64 bits,</span></span><br><span class="line"><span class="comment">       and might be the same width as int or as long</span></span><br><span class="line"><span class="comment">     - size_t might have different width and signedness as INTERNAL_SIZE_T</span></span><br><span class="line"><span class="comment">     - int and long might be 32 or 64 bits, and might be the same width</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   To deal with this, most comparisons and difference computations</span></span><br><span class="line"><span class="comment">   among INTERNAL_SIZE_Ts should cast them to unsigned long, being</span></span><br><span class="line"><span class="comment">   aware of the fact that casting an unsigned int to a wider long does</span></span><br><span class="line"><span class="comment">   not sign-extend. (This also makes checking for negative numbers</span></span><br><span class="line"><span class="comment">   awkward.) Some of these casts result in harmless compiler warnings</span></span><br><span class="line"><span class="comment">   on some systems.  */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> INTERNAL_SIZE_T</span></span><br><span class="line"><span class="meta"># <span class="keyword">define</span> INTERNAL_SIZE_T size_t</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Alignment"><a href="#Alignment" class="headerlink" title="Alignment"></a><code>Alignment</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Alignment = <span class="number">2</span> * (<span class="keyword">sizeof</span>(<span class="type">size_t</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="MORECORE"><a href="#MORECORE" class="headerlink" title="MORECORE"></a><code>MORECORE</code></h3><p>获取更多内存的路径，默认为 <code>sbrk</code></p>
+<h3 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a><code>malloc</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  malloc(size_t n)</span></span><br><span class="line"><span class="comment">  Returns a pointer to a newly allocated chunk of at least n</span></span><br><span class="line"><span class="comment">  bytes, or null if no space is available. Additionally, on </span></span><br><span class="line"><span class="comment">  failure, errno is set to ENOMEM on ANSI C systems.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  If n is zero, malloc returns a minimum-sized chunk. (The</span></span><br><span class="line"><span class="comment">  minimum size is 16 bytes on most 32bit systems, and 24 or 32</span></span><br><span class="line"><span class="comment">  bytes on 64bit systems.)  On most systems, size_t is an unsigned</span></span><br><span class="line"><span class="comment">  type, so calls with negative arguments are interpreted as</span></span><br><span class="line"><span class="comment">  requests for huge amounts of space, which will often fail. The</span></span><br><span class="line"><span class="comment">  maximum supported value of n differs across systems, but is in</span></span><br><span class="line"><span class="comment">  all cases less than the maximum representable value of a</span></span><br><span class="line"><span class="comment">  size_t.</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="free"><a href="#free" class="headerlink" title="free"></a><code>free</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  free(void* p)</span></span><br><span class="line"><span class="comment">  Releases the chunk of memory pointed to by p, that had been</span></span><br><span class="line"><span class="comment">  previously allocated using malloc or a related routine such as</span></span><br><span class="line"><span class="comment">  realloc. It has no effect if p is null. It can have arbitrary</span></span><br><span class="line"><span class="comment">  (i.e., bad!) effects if p has already been freed.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  Unless disabled (using mallopt), freeing very large spaces will</span></span><br><span class="line"><span class="comment">  when possible, automatically trigger operations that give</span></span><br><span class="line"><span class="comment">  back unused memory to the system, thus reducing program</span></span><br><span class="line"><span class="comment">  footprint.</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="heap-info"><a href="#heap-info" class="headerlink" title="heap_info"></a><code>heap_info</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">heap_info</span> &#123;</span></span><br><span class="line">	mstate ar_ptr; <span class="comment">/* Arena for this heap. */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> _<span class="title">heap_info</span> * <span class="title">prev</span>;</span> <span class="comment">/* Previous heap. */</span></span><br><span class="line">	<span class="type">size_t</span> size; <span class="comment">/* Current size in bytes. */</span></span><br><span class="line">	<span class="type">char</span> pad[<span class="number">-5</span> * SIZE_SZ &amp; MALLOC_ALIGN_MASK];</span><br><span class="line">&#125; heap_info; </span><br></pre></td></tr></table></figure>
+
+<p><code>mstate ar_ptr</code>  a pointer to the heaps arena, this implies a one-to-one relationship between heaps and arenas (jf: dc) </p>
+<p><code>struct _heap_info *ptr</code> a pointer to the previous heap_info structure, the heap_info structures are maintained in a circular singular linked list (jf: dc) </p>
+<p><code>struct _heap_info *ptr</code> a pointer to the previous heap_info structure, the heap_info structures are maintained in a circular singular linked list (jf: dc) </p>
+<p><code>size_t size</code> size of the current heap </p>
+<p><code>char pad[…]</code> used for padding to ensure proper alignment </p>
+<h3 id="malloc-state"><a href="#malloc-state" class="headerlink" title="malloc_state"></a><code>malloc_state</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="comment">/* Serialize access.  */</span></span><br><span class="line">  __libc_lock_define (, mutex);</span><br><span class="line">  <span class="comment">/* Flags (formerly in max_fast).  */</span></span><br><span class="line">  <span class="type">int</span> flags;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Fastbins */</span></span><br><span class="line">  mfastbinptr fastbinsY[NFASTBINS];</span><br><span class="line">  <span class="comment">/* Base of the topmost chunk -- not otherwise kept in a bin */</span></span><br><span class="line">  mchunkptr top;</span><br><span class="line">  <span class="comment">/* The remainder from the most recent split of a small request */</span></span><br><span class="line">  mchunkptr last_remainder;</span><br><span class="line">  <span class="comment">/* Normal bins packed as described above */</span></span><br><span class="line">  mchunkptr bins[NBINS * <span class="number">2</span> - <span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Bitmap of bins */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> binmap[BINMAPSIZE];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Linked list */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next</span>;</span></span><br><span class="line">  <span class="comment">/* Linked list for free arenas.  Access to this field is serialized</span></span><br><span class="line"><span class="comment">     by free_list_lock in arena.c.  */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next_free</span>;</span></span><br><span class="line">  <span class="comment">/* Number of threads attached to this arena.  0 if the arena is on</span></span><br><span class="line"><span class="comment">     the free list.  Access to this field is serialized by</span></span><br><span class="line"><span class="comment">     free_list_lock in arena.c.  */</span></span><br><span class="line"></span><br><span class="line">  INTERNAL_SIZE_T attached_threads;</span><br><span class="line">  <span class="comment">/* Memory allocated from the system in this arena.  */</span></span><br><span class="line">  INTERNAL_SIZE_T system_mem;</span><br><span class="line">  INTERNAL_SIZE_T max_system_mem;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">mstate</span>;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="malloc-chunk"><a href="#malloc-chunk" class="headerlink" title="malloc_chunk"></a><code>malloc_chunk</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span> &#123;</span></span><br><span class="line">  INTERNAL_SIZE_T      mchunk_prev_size;  <span class="comment">/* Size of previous chunk, if it is free. */</span></span><br><span class="line">  INTERNAL_SIZE_T      mchunk_size;       <span class="comment">/* Size in bytes, including overhead. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd</span>;</span>                <span class="comment">/* double links -- used only if this chunk is free. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk</span>;</span></span><br><span class="line">  <span class="comment">/* Only used for large blocks: pointer to next larger size.  */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd_nextsize</span>;</span> <span class="comment">/* double links -- used only if this chunk is free. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk_nextsize</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">mchunkptr</span>;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="arena-get-ar-ptr-size"><a href="#arena-get-ar-ptr-size" class="headerlink" title="arena_get(ar_ptr, size)"></a><code>arena_get(ar_ptr, size)</code></h3><p>获得一个arena并锁住相应的mutex</p>
+<p><code>ar_ptr</code>指向arena</p>
+<p><code>size</code>只是一个马上需要多少内存的提示</p>
+<h3 id="sysmalloc"><a href="#sysmalloc" class="headerlink" title="sysmalloc"></a><code>sysmalloc</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">   sysmalloc handles malloc cases requiring more memory from the system.</span></span><br><span class="line"><span class="comment">   On entry, it is assumed that av-&gt;top does not have enough</span></span><br><span class="line"><span class="comment">   space to service request for nb bytes, thus requiring that av-&gt;top</span></span><br><span class="line"><span class="comment">   be extended or replaced.</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="void-alloc-perturb-char-p-size-t-n"><a href="#void-alloc-perturb-char-p-size-t-n" class="headerlink" title="void alloc_perturb (char *p, size_t n)"></a><code>void alloc_perturb (char *p, size_t n)</code></h3><p>If <code>perturb_byte</code> (tunable parameter for malloc using <code>M_PERTURB</code>) is non-zero (by default it is 0), sets the <code>n</code> bytes pointed to by <code>p</code> to be equal to <code>perturb_byte</code> ^ 0xff.</p>
+<h3 id="void-free-perturb-char-p-size-t-n"><a href="#void-free-perturb-char-p-size-t-n" class="headerlink" title="void free_perturb (char *p, size_t n)"></a><code>void free_perturb (char *p, size_t n)</code></h3><p>If <code>perturb_byte</code> (tunable parameter for malloc using <code>M_PERTURB</code>) is non-zero (by default it is 0), sets the <code>n</code> bytes pointed to by <code>p</code> to be equal to <code>perturb_byte</code>.</p>
+<h3 id="void-malloc-init-state-mstate-av"><a href="#void-malloc-init-state-mstate-av" class="headerlink" title="void malloc_init_state (mstate av)"></a><code>void malloc_init_state (mstate av)</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">   Initialize a malloc_state struct.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   This is called only from within malloc_consolidate, which needs</span></span><br><span class="line"><span class="comment">   be called in the same contexts anyway.  It is never called directly</span></span><br><span class="line"><span class="comment">   outside of malloc_consolidate because some optimizing compilers try</span></span><br><span class="line"><span class="comment">   to inline it at all call points, which turns out not to be an</span></span><br><span class="line"><span class="comment">   optimization at all. (Inlining it in malloc_consolidate is fine though.)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>非fast bins，为每一个bin创建空的循环双向链表</p>
+</li>
+<li><p>把<code>av</code>的<code>FASTCHUNKS_BIT</code>置位</p>
+</li>
+<li><p>初始化 <code>av-&gt;top</code> 为第一个unsorted chunk</p>
+</li>
+</ol>
+<h3 id="unlink-AV-P-BK-FD"><a href="#unlink-AV-P-BK-FD" class="headerlink" title="unlink(AV, P, BK, FD)"></a><code>unlink(AV, P, BK, FD)</code></h3><p>定义的宏，把一个堆块从一个bin中移除</p>
+<ol>
+<li><p>检查这个堆块的 <code>size</code> 和下一个堆块（内存相邻）中的 <code>prev_size</code>相同，否则报错error (“corrupted size vs. prev_size”)</p>
+</li>
+<li><p>检查 <code>P-&gt;fd-&gt;bk == P</code> and <code>P-&gt;bk-&gt;fd == P</code>，否则报错error (“corrupted double-linked list”)</p>
+</li>
+<li><p>调整链表中前后堆块的指针以实现移除：</p>
+<ol>
+<li>Set <code>P-&gt;fd-&gt;bk</code> &#x3D; <code>P-&gt;bk</code>.</li>
+<li>Set <code>P-&gt;bk-&gt;fd</code> &#x3D; <code>P-&gt;fd</code>.</li>
+</ol>
+</li>
+</ol>
+<h3 id="void-malloc-consolidate-mstate-av"><a href="#void-malloc-consolidate-mstate-av" class="headerlink" title="void malloc_consolidate(mstate av)"></a><code>void malloc_consolidate(mstate av)</code></h3><p>这是free()的特别版本</p>
+<ol>
+<li><p>检查 <code>global_max_fast</code> 是否为0 (<code>av</code> 未初始化) ，如果为0，用 <code>av</code> 为参数调用 <code>malloc_init_state</code> 并返回</p>
+</li>
+<li><p>如果 <code>global_max_fast</code> 非零，把 <code>av</code> 的<code>FASTCHUNKS_BIT</code>清零</p>
+</li>
+<li><p>在fastbin数组上从头到尾迭代：</p>
+<ol>
+<li><p>获得一个当前fastbin堆块的锁，若非NULL则继续处理</p>
+</li>
+<li><p>如果前一个堆块(内存相邻) 空闲，对其调用<code>unlink</code> </p>
+</li>
+<li><p>如果下一个堆块(内存相邻) 不是top chunk：</p>
+<ol>
+<li>如果下一个堆块空闲，对其调用 <code>unlink</code> </li>
+<li>将堆块和前一个、后一个空闲堆块合并，然后将聚合的堆块插入unsorted bin的头部</li>
+</ol>
+</li>
+<li><p>如果下一个堆块(内存相邻) 是一个top chunk，适当地合并为一个top chunk</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><em>注意</em>：对是否“空闲”的定义是检查<code>PREV_IN_USE</code> 标志位，因此这里其他fastbin堆块不会被认为是空闲的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/10/21/%E5%A0%86%E6%94%BB%E5%87%BB%E7%AC%94%E8%AE%B0/" data-id="cm9ilnvaw0005vsi73o2cej95" data-title="堆攻击笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/heap/" rel="tag">heap</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/ptmalloc/" rel="tag">ptmalloc</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../../../2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Sektor7-Evasion Windows RTOps笔记
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/blog/">blog</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Crypto/" rel="tag">Crypto</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Misc/" rel="tag">Misc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/env-build/" rel="tag">env_build</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/evasion/" rel="tag">evasion</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/heap/" rel="tag">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/model-train/" rel="tag">model_train</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/paper-note/" rel="tag">paper_note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/pose-estimation/" rel="tag">pose_estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ptmalloc/" rel="tag">ptmalloc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/rwctf2024/" rel="tag">rwctf2024</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/transformer/" rel="tag">transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/writeup/" rel="tag">writeup</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="../../../../tags/Crypto/" style="font-size: 10px;">Crypto</a> <a href="../../../../tags/Misc/" style="font-size: 10px;">Misc</a> <a href="../../../../tags/ctf/" style="font-size: 10px;">ctf</a> <a href="../../../../tags/debug/" style="font-size: 10px;">debug</a> <a href="../../../../tags/env-build/" style="font-size: 10px;">env_build</a> <a href="../../../../tags/evasion/" style="font-size: 10px;">evasion</a> <a href="../../../../tags/heap/" style="font-size: 10px;">heap</a> <a href="../../../../tags/kernel/" style="font-size: 10px;">kernel</a> <a href="../../../../tags/linux/" style="font-size: 10px;">linux</a> <a href="../../../../tags/model-train/" style="font-size: 10px;">model_train</a> <a href="../../../../tags/note/" style="font-size: 20px;">note</a> <a href="../../../../tags/paper-note/" style="font-size: 10px;">paper_note</a> <a href="../../../../tags/pose-estimation/" style="font-size: 10px;">pose_estimation</a> <a href="../../../../tags/ptmalloc/" style="font-size: 10px;">ptmalloc</a> <a href="../../../../tags/rwctf2024/" style="font-size: 10px;">rwctf2024</a> <a href="../../../../tags/transformer/" style="font-size: 10px;">transformer</a> <a href="../../../../tags/windows/" style="font-size: 10px;">windows</a> <a href="../../../../tags/writeup/" style="font-size: 10px;">writeup</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/06/">June 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2022/10/">October 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../../2024/06/01/%E5%AE%89%E8%A3%85bcc%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">安装bcc和bpftrace踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/04/25/%E8%AE%AD%E7%BB%83%E7%BB%8F%E9%AA%8C%E6%91%98%E5%BD%95%20996efa07914a43b68886a10868d83e1d/">训练经验摘录</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/03/23/ViTPose%E7%AC%94%E8%AE%B0/">ViTPose笔记</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/">Writeup-RealWorldCTF2024-The-truth-of-Plain</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/">Sektor7-Evasion Windows RTOps笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../../js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="../../../../fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

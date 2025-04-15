@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>训练经验摘录 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Training language models to follow instructions with human feedback  Supervised Fine-Tuning: 16epoch, a cosine lr decay, residual dropout 0.2 训练多个模型，最后根据验证集上的分数选择最终模型 是否过拟合并非唯一评价标准，观察更多epoch的得分情况 过拟合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="训练经验摘录">
+<meta property="og:url" content="http://example.com/2024/04/25/%E8%AE%AD%E7%BB%83%E7%BB%8F%E9%AA%8C%E6%91%98%E5%BD%95%20996efa07914a43b68886a10868d83e1d/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Training language models to follow instructions with human feedback  Supervised Fine-Tuning: 16epoch, a cosine lr decay, residual dropout 0.2 训练多个模型，最后根据验证集上的分数选择最终模型 是否过拟合并非唯一评价标准，观察更多epoch的得分情况 过拟合">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-04-25T02:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-15T14:28:43.280Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="note">
+<meta property="article:tag" content="model_train">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../../../atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="../../../../favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="../../../../css/style.css">
+
+  
+    
+<link rel="stylesheet" href="../../../../fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../../index.html" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="../../../../index.html">Home</a>
+        
+          <a class="main-nav-link" href="../../../../archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="../../../../atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-训练经验摘录 996efa07914a43b68886a10868d83e1d" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2024-04-25T02:00:00.000Z" itemprop="datePublished">2024-04-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="../../../../categories/blog/">blog</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      训练经验摘录
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p><strong>Training language models to follow instructions with human feedback</strong></p>
+<ul>
+<li>Supervised Fine-Tuning: 16epoch, a cosine lr decay, residual dropout 0.2</li>
+<li>训练多个模型，最后根据验证集上的分数选择最终模型</li>
+<li>是否过拟合并非唯一评价标准，观察更多epoch的得分情况</li>
+<li>过拟合的原因：数据点之间相关度过高</li>
+<li>per-token 的 KL 惩罚降低奖励模型的过优化</li>
+<li>PPO-ptx</li>
+</ul>
+</li>
+<li><p><strong>What matters when building vision-language models?</strong></p>
+<ul>
+<li>如果一个模型参数量更大但表现与参数量较小的模型相近，则参数量较大的模型<strong>训练不充分</strong></li>
+<li>可以观察<strong>冻结部分模型后可训练的参数量</strong>，及其与整体参数量的比例，较低比例可能限制训练的表达能力</li>
+<li><strong>loss divergence</strong>可能由：学习率过高、梯度爆炸、模型过拟合而学习数据中的噪声、数据质量差、模型架构问题等因素导致，解决措施有：降低学习率（甚至可以激进地降低）、逐步解冻多种组件而非直接完全解冻、用LoRa调整预训练的参数并使用标准的全参数微调来更新新初始化的参数、梯度剪切、调整模型架构（如使用更稳定的激活函数或初始化方法）、引入正则化、提高数据质量等</li>
+<li>用<strong>Transformer-based pooling</strong>（perceiver resampler）作池化<strong>降低视觉token数</strong>，既能提高性能又减少了视觉token数，传统的池化会降低性能</li>
+<li>interpolate在低分辨率下训练的<strong>位置编码</strong>可以适应高分辨率图片，需要用LoRa调vision encoder以适应这些调整</li>
+<li>用计算量换取性能提升：在指令微调阶段将输入由一张图像转换为五张图像的list：四张<strong>crops</strong>和一张原始图像，可以在对<strong>图像分辨率要求较高的任务</strong>中提高性能</li>
+<li><strong>将训练划分为多个阶段</strong>，每个阶段设置不同的最大分辨率和序列长度以适应不同的训练数据</li>
+<li>用<strong>梯度累积</strong>减少GPU内存开销</li>
+<li>降低<strong>过拟合的风险</strong>：用NEFTune技术向embeds添加噪声，随机缩放训练中的图像分辨率， shuffle the multiple user&#x2F;assistant turns randomly before feeding the example to the model</li>
+</ul>
+</li>
+<li><p>Stabilize training and enhance Transformer  model performence</p>
+<ul>
+<li>Sub-LayerNorm 的表现比 Pre-LayerNorm 更好</li>
+<li>在 FFN 中使用 GeGLU 作为activation function</li>
+<li>引入 relative position bias，在预训练阶段不同自注意层共享该参数，在微调阶段各层解耦</li>
+<li>引入 LayerScale 动态调整每个残差块的输出，即在1+x运算之前，给x乘一个可学习的对角矩阵，初始化为 1e-6</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/04/25/%E8%AE%AD%E7%BB%83%E7%BB%8F%E9%AA%8C%E6%91%98%E5%BD%95%20996efa07914a43b68886a10868d83e1d/" data-id="cm9ilnvay0006vsi70kfu45yb" data-title="训练经验摘录" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/model-train/" rel="tag">model_train</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../../06/01/%E5%AE%89%E8%A3%85bcc%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          安装bcc和bpftrace踩坑记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../../03/23/ViTPose%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ViTPose笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/blog/">blog</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Crypto/" rel="tag">Crypto</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Misc/" rel="tag">Misc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/env-build/" rel="tag">env_build</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/evasion/" rel="tag">evasion</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/heap/" rel="tag">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/model-train/" rel="tag">model_train</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/paper-note/" rel="tag">paper_note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/pose-estimation/" rel="tag">pose_estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ptmalloc/" rel="tag">ptmalloc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/rwctf2024/" rel="tag">rwctf2024</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/transformer/" rel="tag">transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/writeup/" rel="tag">writeup</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="../../../../tags/Crypto/" style="font-size: 10px;">Crypto</a> <a href="../../../../tags/Misc/" style="font-size: 10px;">Misc</a> <a href="../../../../tags/ctf/" style="font-size: 10px;">ctf</a> <a href="../../../../tags/debug/" style="font-size: 10px;">debug</a> <a href="../../../../tags/env-build/" style="font-size: 10px;">env_build</a> <a href="../../../../tags/evasion/" style="font-size: 10px;">evasion</a> <a href="../../../../tags/heap/" style="font-size: 10px;">heap</a> <a href="../../../../tags/kernel/" style="font-size: 10px;">kernel</a> <a href="../../../../tags/linux/" style="font-size: 10px;">linux</a> <a href="../../../../tags/model-train/" style="font-size: 10px;">model_train</a> <a href="../../../../tags/note/" style="font-size: 20px;">note</a> <a href="../../../../tags/paper-note/" style="font-size: 10px;">paper_note</a> <a href="../../../../tags/pose-estimation/" style="font-size: 10px;">pose_estimation</a> <a href="../../../../tags/ptmalloc/" style="font-size: 10px;">ptmalloc</a> <a href="../../../../tags/rwctf2024/" style="font-size: 10px;">rwctf2024</a> <a href="../../../../tags/transformer/" style="font-size: 10px;">transformer</a> <a href="../../../../tags/windows/" style="font-size: 10px;">windows</a> <a href="../../../../tags/writeup/" style="font-size: 10px;">writeup</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/06/">June 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2022/10/">October 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../06/01/%E5%AE%89%E8%A3%85bcc%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">安装bcc和bpftrace踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="">训练经验摘录</a>
+          </li>
+        
+          <li>
+            <a href="../../../03/23/ViTPose%E7%AC%94%E8%AE%B0/">ViTPose笔记</a>
+          </li>
+        
+          <li>
+            <a href="../../../01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/">Writeup-RealWorldCTF2024-The-truth-of-Plain</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/">Sektor7-Evasion Windows RTOps笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../../js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="../../../../fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

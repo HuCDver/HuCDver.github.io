@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Writeup-RealWorldCTF2024-The-truth-of-Plain | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="题目The truth of PlainScore: 176Misc, Crypto, difficulty:Baby You are right, but “CTF” originated from the DEFCON global hacker conference in 1996. It is a competitive game among network security enthus">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Writeup-RealWorldCTF2024-The-truth-of-Plain">
+<meta property="og:url" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="题目The truth of PlainScore: 176Misc, Crypto, difficulty:Baby You are right, but “CTF” originated from the DEFCON global hacker conference in 1996. It is a competitive game among network security enthus">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/tcp_regular.png">
+<meta property="og:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/ss_3.png">
+<meta property="og:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/guess_http.png">
+<meta property="og:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/secret.png">
+<meta property="og:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/result.png">
+<meta property="article:published_time" content="2024-01-28T02:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-15T13:38:25.736Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="writeup">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="rwctf2024">
+<meta property="article:tag" content="Misc">
+<meta property="article:tag" content="Crypto">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/tcp_regular.png">
+  
+    <link rel="alternate" href="../../../../atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="../../../../favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="../../../../css/style.css">
+
+  
+    
+<link rel="stylesheet" href="../../../../fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../../index.html" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="../../../../index.html">Home</a>
+        
+          <a class="main-nav-link" href="../../../../archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="../../../../atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Writeup-RealWorldCTF2024-The-truth-of-Plain" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="" class="article-date">
+  <time class="dt-published" datetime="2024-01-28T02:00:00.000Z" itemprop="datePublished">2024-01-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="../../../../categories/blog/">blog</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Writeup-RealWorldCTF2024-The-truth-of-Plain
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>The truth of Plain<br>Score: 176<br>Misc, Crypto, difficulty:Baby</p>
+<p>You are right, but “CTF” originated from the DEFCON global hacker conference in 1996. It is a competitive game among network security enthusiasts. This game takes place in a competition called “RealWorld”, where those who solve the challenge will be awarded a “Flag”. You will play a character named “CTFer” and work with your teammates in the game, using knowledge and skills to solve various challenges - and at the same time, gradually discover the truth of “Plain”.</p>
+<p>Repository: <a target="_blank" rel="noopener" href="https://github.com/gwuhaolin/lightsocks">https://github.com/gwuhaolin/lightsocks</a></p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><ol>
+<li><p>打开repo链接熟悉协议，得知ss连接建立和加解密的信息</p>
+</li>
+<li><p>打开并解压zip文件，要求密码，于是认为该密码需要经pcap分析得到</p>
+</li>
+<li><p>Wireshark分析pcap文件，关注到几个Data长度不为0的tcp包，这些包Data长度依次为3，2，10，7，一百多，两千多，3，2，10，7，一百多，两千多</p>
+<p><img src="/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/tcp_regular.png" alt="tcp_regular"></p>
+</li>
+<li><p>结合协议发现3，2，10，7的包为建立加密连接过程，一百多和两千多的包分别为加密的请求和响应，因此该pcap可分为两次连接</p>
+</li>
+<li><p>由协议知明文和密文为一一对应关系，对照协议中连接建立的字段和建立加密连接过程的包，得到部分加密box</p>
+<p><img src="/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/ss_3.png" alt="ss_3"></p>
+<p>参考<a target="_blank" rel="noopener" href="https://github.com/gwuhaolin/blog/issues/12">https://github.com/gwuhaolin/blog/issues/12</a></p>
+<table>
+<thead>
+<tr>
+<th>VER</th>
+<th>NMETHODS</th>
+<th>METHODS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">box=&#123;<span class="number">0x00</span>:<span class="number">0x78</span>,<span class="number">0x01</span>:<span class="number">0x99</span>,<span class="number">0x03</span>:<span class="number">0xfd</span>,<span class="number">0x05</span>:<span class="number">0xf3</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>搜索相似题目，根据请求和响应的包大小猜测传输的是HTTP报文，先猜GET方法</p>
+<p><img src="/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/guess_http.png"></p>
+</li>
+<li><p>若0x89 0x62 0x6e分别为box[‘G’] box[‘E’] box[‘T’]，下文不远处找到0x2f 0x6e 0x6e 0x92，即? box[‘T’] box[‘T’] ?，符合box[‘H’] box[‘T’] box[‘T’] box[‘P’]模式，说明猜测可能正确</p>
+</li>
+<li><p>同理，根据HTTP格式和常用字符猜测其他对应关系，可以确定为HTTP报文。猜测拓展已知加密box，据此得到解密box还原部分报文，迭代该过程，得到部分加密box（box）及解密box（rev_box）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">box=&#123;</span><br><span class="line"><span class="number">0x00</span>:<span class="number">0x78</span>,<span class="number">0x01</span>:<span class="number">0x99</span>,<span class="number">0x03</span>:<span class="number">0xfd</span>,<span class="number">0x05</span>:<span class="number">0xf3</span>,<span class="comment">##ss5</span></span><br><span class="line"><span class="number">0x47</span>:<span class="number">0x89</span>,<span class="number">0x45</span>:<span class="number">0x62</span>,<span class="number">0x54</span>:<span class="number">0x6e</span>,<span class="comment">##GET</span></span><br><span class="line"><span class="number">0x20</span>:<span class="number">0x30</span>,<span class="comment">##&lt;SPACE&gt;</span></span><br><span class="line"><span class="number">0x2f</span>:<span class="number">0xc1</span>,<span class="comment">##/</span></span><br><span class="line"><span class="number">0x48</span>:<span class="number">0x2f</span>,<span class="number">0x50</span>:<span class="number">0x92</span>,<span class="number">0x31</span>:<span class="number">0xb0</span>,<span class="number">0x2e</span>:<span class="number">0x14</span>,<span class="comment">##HP1.</span></span><br><span class="line"><span class="number">0x32</span>:<span class="number">0xdc</span>,<span class="number">0x30</span>:<span class="number">0x61</span>,<span class="comment">##200</span></span><br><span class="line"><span class="number">0x0a</span>:<span class="number">0x56</span>,<span class="number">0x0d</span>:<span class="number">0xca</span>,<span class="comment">##\r\n</span></span><br><span class="line"><span class="number">0x6f</span>:<span class="number">0x0a</span>,<span class="number">0x73</span>:<span class="number">0x45</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="number">0x3a</span>:<span class="number">0xcb</span>,<span class="comment">##ost:</span></span><br><span class="line"><span class="number">0x4f</span>:<span class="number">0x54</span>,<span class="number">0x4b</span>:<span class="number">0x9d</span>,<span class="comment">##OK</span></span><br><span class="line"><span class="number">0x55</span>:<span class="number">0x00</span>,<span class="number">0x73</span>:<span class="number">0x45</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x72</span>:<span class="number">0xc7</span>,<span class="number">0x2d</span>:<span class="number">0x35</span>,<span class="number">0x41</span>:<span class="number">0xbf</span>,<span class="number">0x67</span>:<span class="number">0xab</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x6e</span>:<span class="number">0xee</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="comment">##User-Agent</span></span><br><span class="line"><span class="number">0x57</span>:<span class="number">0x88</span>,<span class="comment">#Wget</span></span><br><span class="line"><span class="number">0x41</span>:<span class="number">0xbf</span>,<span class="number">0x63</span>:<span class="number">0xfb</span>,<span class="number">0x63</span>:<span class="number">0xfb</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x70</span>:<span class="number">0x01</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="comment">#Accept</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rev_box = <span class="built_in">dict</span>(<span class="built_in">zip</span>(box.values(),box.keys()))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进一步结合附件中的文件名、HTTP时间戳与pcap中的包时间戳、第二次响应的大量文本、连接地址、python版本等得到box</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">box=&#123;</span><br><span class="line"><span class="number">0x00</span>:<span class="number">0x78</span>,<span class="number">0x01</span>:<span class="number">0x99</span>,<span class="number">0x03</span>:<span class="number">0xfd</span>,<span class="number">0x05</span>:<span class="number">0xf3</span>,<span class="comment">##ss5</span></span><br><span class="line"><span class="number">0x47</span>:<span class="number">0x89</span>,<span class="number">0x45</span>:<span class="number">0x62</span>,<span class="number">0x54</span>:<span class="number">0x6e</span>,<span class="comment">##GET</span></span><br><span class="line"><span class="number">0x20</span>:<span class="number">0x30</span>,<span class="comment">##&lt;SPACE&gt;</span></span><br><span class="line"><span class="number">0x2f</span>:<span class="number">0xc1</span>,<span class="comment">##/</span></span><br><span class="line"><span class="number">0x48</span>:<span class="number">0x2f</span>,<span class="number">0x50</span>:<span class="number">0x92</span>,<span class="number">0x31</span>:<span class="number">0xb0</span>,<span class="number">0x2e</span>:<span class="number">0x14</span>,<span class="comment">##HP1.</span></span><br><span class="line"><span class="number">0x32</span>:<span class="number">0xdc</span>,<span class="number">0x30</span>:<span class="number">0x61</span>,<span class="comment">##200</span></span><br><span class="line"><span class="number">0x0a</span>:<span class="number">0x56</span>,<span class="number">0x0d</span>:<span class="number">0xca</span>,<span class="comment">##\r\n</span></span><br><span class="line"><span class="number">0x6f</span>:<span class="number">0x0a</span>,<span class="number">0x73</span>:<span class="number">0x45</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="number">0x3a</span>:<span class="number">0xcb</span>,<span class="comment">##ost:</span></span><br><span class="line"><span class="number">0x4f</span>:<span class="number">0x54</span>,<span class="number">0x4b</span>:<span class="number">0x9d</span>,<span class="comment">##OK</span></span><br><span class="line"><span class="number">0x55</span>:<span class="number">0x00</span>,<span class="number">0x73</span>:<span class="number">0x45</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x72</span>:<span class="number">0xc7</span>,<span class="number">0x2d</span>:<span class="number">0x35</span>,<span class="number">0x41</span>:<span class="number">0xbf</span>,<span class="number">0x67</span>:<span class="number">0xab</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x6e</span>:<span class="number">0xee</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="comment">##User-Agent</span></span><br><span class="line"><span class="number">0x57</span>:<span class="number">0x88</span>,<span class="comment">#Wget</span></span><br><span class="line"><span class="number">0x41</span>:<span class="number">0xbf</span>,<span class="number">0x63</span>:<span class="number">0xfb</span>,<span class="number">0x63</span>:<span class="number">0xfb</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x70</span>:<span class="number">0x01</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="comment">#Accept</span></span><br><span class="line"><span class="number">0x53</span>:<span class="number">0x2d</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x63</span>:<span class="number">0xfb</span>,<span class="number">0x72</span>:<span class="number">0xc7</span>,<span class="number">0x65</span>:<span class="number">0x1c</span>,<span class="number">0x74</span>:<span class="number">0x02</span>,<span class="number">0x2e</span>:<span class="number">0x14</span>,<span class="number">0x7a</span>:<span class="number">0x3f</span>,<span class="number">0x69</span>:<span class="number">0xeb</span>,<span class="number">0x70</span>:<span class="number">0x01</span>,<span class="comment">##Secret.zip</span></span><br><span class="line"><span class="number">0x64</span>:<span class="number">0xf4</span>,<span class="number">0x6c</span>:<span class="number">0x5c</span>,<span class="number">0x76</span>:<span class="number">0x0e</span>,<span class="number">0x43</span>:<span class="number">0x2e</span>,<span class="number">0x2a</span>:<span class="number">0xc4</span>,<span class="number">0x6d</span>:<span class="number">0xf1</span>,<span class="number">0x79</span>:<span class="number">0x85</span>,<span class="number">0x68</span>:<span class="number">0x27</span>,<span class="number">0x61</span>:<span class="number">0xc9</span>,<span class="number">0x4c</span>:<span class="number">0xe0</span>,<span class="number">0x4d</span>:<span class="number">0x4b</span>,<span class="number">0x66</span>:<span class="number">0x48</span>,<span class="comment">##dlvC*myhaLMf</span></span><br><span class="line"><span class="number">0x4a</span>:<span class="number">0x58</span>,<span class="number">0x44</span>:<span class="number">0xf5</span>,<span class="number">0x75</span>:<span class="number">0x53</span>,<span class="number">0x77</span>:<span class="number">0xdb</span>,<span class="number">0x6a</span>:<span class="number">0x86</span>,<span class="number">0x49</span>:<span class="number">0x5a</span>,<span class="number">0x6b</span>:<span class="number">0x8d</span>,<span class="number">0x62</span>:<span class="number">0xb2</span>,<span class="number">0x71</span>:<span class="number">0xcf</span>,<span class="number">0x46</span>:<span class="number">0xd5</span>,<span class="number">0x27</span>:<span class="number">0x1d</span>,<span class="number">0x2c</span>:<span class="number">0x13</span>,<span class="comment">#JDuwjIkbqF&#x27;,</span></span><br><span class="line"><span class="number">0x34</span>:<span class="number">0x40</span>,<span class="number">0x38</span>:<span class="number">0x49</span>,<span class="number">0x33</span>:<span class="number">0x1a</span>,<span class="number">0x37</span>:<span class="number">0x3e</span>,<span class="number">0x36</span>:<span class="number">0x12</span>,<span class="number">0x39</span>:<span class="number">0xa5</span>,<span class="number">0x35</span>:<span class="number">0x23</span>,<span class="number">0x22</span>:<span class="number">0x67</span>,<span class="number">0x52</span>:<span class="number">0xce</span>,<span class="comment">#4837695&quot;R</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rev_box = <span class="built_in">dict</span>(<span class="built_in">zip</span>(box.values(),box.keys()))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>则两次HTTP请求、第一次响应的HTTP头及部分数据、第二次HTTP响应已可完全解密</p>
+<p>client_1:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/Secret.zip</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"></span><br><span class="line"><span class="language-http"><span class="attribute">Host</span><span class="punctuation">: </span>192.168.5.72:8000</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Wget/1.21.2</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>identity</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Connection</span><span class="punctuation">: </span>Keep-Alive</span></span><br></pre></td></tr></table></figure>
+
+<p>server_1_partial:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.0</span> <span class="number">200</span> OK</span><br><span class="line"></span><br><span class="line"><span class="language-apache"><span class="attribute">Server</span>: SimpleHTTP/<span class="number">0</span>.<span class="number">6</span> Python/<span class="number">3</span>.<span class="number">11</span>.<span class="number">4</span></span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"><span class="attribute">Date</span>: Mon, <span class="number">22</span> Jan <span class="number">2024</span> <span class="number">07</span>:<span class="number">08</span>:<span class="number">14</span> GMT</span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"><span class="attribute">Content</span>-type: application/e-zip-compressed</span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"><span class="attribute">Content</span>-Length: <span class="number">1811</span></span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"><span class="attribute">Last</span>-Modified: Mon, <span class="number">22</span> Jan <span class="number">2024</span> <span class="number">07</span>:<span class="number">02</span>:<span class="number">45</span> GMT</span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"></span></span><br><span class="line"><span class="language-apache"><span class="attribute">PK</span>...</span></span><br></pre></td></tr></table></figure>
+
+<p>client_2:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/key</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"></span><br><span class="line"><span class="language-http"><span class="attribute">Host</span><span class="punctuation">: </span>192.168.5.72:8000</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Wget/1.21.2</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>identity</span></span><br><span class="line"><span class="language-http"></span></span><br><span class="line"><span class="language-http"><span class="attribute">Connection</span><span class="punctuation">: </span>Keep-Alive</span></span><br></pre></td></tr></table></figure>
+
+<p>server_2:</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.0</span> <span class="number">200</span> OK</span><br><span class="line"></span><br><span class="line"><span class="language-vbnet"><span class="symbol">Server:</span> SimpleHTTP/<span class="number">0.6</span> Python/<span class="number">3.11</span>.<span class="number">4</span></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"><span class="symbol">Date:</span> Mon, <span class="number">22</span> Jan <span class="number">2024</span> <span class="number">07</span>:<span class="number">08</span>:<span class="number">16</span> GMT</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">Content-type: application/octet-stream</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">Content-Length: <span class="number">2008</span></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">Last-Modified: Sat, <span class="number">02</span> Dec <span class="number">2023</span> <span class="number">08</span>:<span class="number">56</span>:<span class="number">01</span> GMT</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">Once upon a time <span class="keyword">in</span> the quaint town <span class="keyword">of</span> Serenity Falls, there lived a young computer whiz named Alee. Alee was known <span class="keyword">for</span> their eeceptional skills <span class="keyword">in</span> hacking <span class="built_in">and</span> coding, but they always used their talents <span class="keyword">for</span> good. The townspeople admired Alee<span class="comment">&#x27;s ability to uncover the truth and bring justice to those who needed it.</span></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">One day, a mysterious message appeared <span class="keyword">on</span> Alee<span class="comment">&#x27;s computer screen. It was an anonymous tip about a nefarious plot to sabotage the town&#x27;s power grid. Intrigued and determined to protect Serenity Falls, Alee delved into the digital realm, tracing the origins of the message.</span></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"><span class="keyword">As</span> Alee unraveled the layers <span class="keyword">of</span> the virtual puzzle, they discovered a complee network <span class="keyword">of</span> cybercriminals <span class="keyword">with</span> plans <span class="keyword">to</span> plunge the entire town <span class="keyword">into</span> darkness. The clock was ticking, <span class="built_in">and</span> Alee needed <span class="keyword">to</span> act swiftly. <span class="keyword">With</span> <span class="keyword">each</span> keystroke, they penetrated firewalls <span class="built_in">and</span> bypassed encrypted barriers, determined <span class="keyword">to</span> thwart the impending disaster.</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet">The trail led Alee <span class="keyword">to</span> an abandoned warehouse <span class="keyword">on</span> the outskirts <span class="keyword">of</span> town. Armed <span class="keyword">with</span> their laptop <span class="built_in">and</span> a sense <span class="keyword">of</span> purpose, Alee cautiously entered the darkened building. <span class="keyword">In</span> the heart <span class="keyword">of</span> the warehouse, they found a room filled <span class="keyword">with</span> servers <span class="built_in">and</span> a <span class="keyword">group</span> <span class="keyword">of</span> shadowy figures huddled around screens.</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"><span class="keyword">With</span> a flourish <span class="keyword">of</span> keystrokes, Alee disabled the malicious code <span class="built_in">and</span> prevented the impending catastrophe. The criminals were apprehended, <span class="built_in">and</span> the town <span class="keyword">of</span> Serenity Falls was safe once more.</span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"><span class="keyword">As</span> the authorities arrived <span class="keyword">to</span> <span class="keyword">take</span> the criminals <span class="keyword">into</span> custody, Alee couldn<span class="comment">&#x27;t help but reflect on the importance of cybersecurity. Turning to the gathered crowd, Alee raised their voice and declared, &quot;In a world where digital threats lurk in the shadows, we must remain vigilant. Remember, the password is 7dd5c046fdb876f6351f4e04e8b43a20. Stay safe, Serenity Falls, and let&#x27;s build a secure future together.&quot;</span></span></span><br><span class="line"><span class="language-vbnet"></span></span><br><span class="line"><span class="language-vbnet"><span class="built_in">And</span> <span class="keyword">with</span> those words, Alee became a local hero, <span class="built_in">not</span> just <span class="keyword">for</span> their technical prowess, but <span class="keyword">for</span> their unwavering commitment <span class="keyword">to</span> safeguarding the digital realm <span class="built_in">and</span> the community they called home.</span></span><br><span class="line"><span class="language-vbnet"></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意到 password is 7dd5c046fdb876f6351f4e04e8b43a20，输入zip解压，密码错误，失去方向。认为该password为某些提示或第二次响应的短文中特殊单词的md5，尝试五位数字母密码碰撞、短文转字典碰撞，均失败</p>
+</li>
+<li><p>冷静想想不能陷入字谜游戏，回到”Real World”的宗旨，分析pcap中的包反映了怎样的事件：客户端向同一个服务器先GET Secret.zip，再GET key。而附件Secret.zip中就有key文件，比较两个key文件，发现大小相同，应该为同一个文件。回想起以前做过的zip文件雕刻实验，印象中依稀有不用知道密码就能破解zip加密的方法，又已知文件明文和文件密文，故搜索zip已知明文攻击，发现工具bkcrack</p>
+</li>
+<li><p>然而key文件使用ZipCrypto Deflate（而非Store）压缩加密，参考<a target="_blank" rel="noopener" href="https://github.com/kimci86/bkcrack/blob/master/example/tutorial.md">https://github.com/kimci86/bkcrack/blob/master/example/tutorial.md</a> ，即压缩后的key文件才算加密的明文，尽管已有全部的原始key文件数据，但试用Deflate压缩原始key文件，把压缩后的全部或部分数据作为明文使用bkcrack，均失败。</p>
+<p><img src="/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/secret.png"></p>
+</li>
+<li><p>由于zip中还有一个ZipCrypto Store加密的Document.zip文件，想到上文查找zip已知明文攻击时搜到的一篇文章<a target="_blank" rel="noopener" href="https://m.freebuf.com/articles/network/255145.html">https://m.freebuf.com/articles/network/255145.html</a> ，若Document.zip是文件名为Document（或flag.txt）的压缩文件，则8个明文字节可知，再加上zip的固定签名504b0304，共12个明文字节，足够使用bkcrack破解，尝试并成功破解，解压得到Document.zip</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&gt; bkcrack <span class="literal">-C</span> .\Secret.zip <span class="literal">-c</span> Document.zip <span class="literal">-p</span> .\file_in_zip.txt <span class="literal">-o</span> <span class="number">30</span> <span class="literal">-x</span> <span class="number">0</span> <span class="number">504</span>b0304</span><br><span class="line">bkcrack <span class="number">1.6</span>.<span class="number">1</span> - <span class="number">2024</span><span class="literal">-01-22</span></span><br><span class="line">[<span class="number">23</span>:<span class="number">55</span>:<span class="number">46</span>] Attack on <span class="number">4194304</span> Z values at index <span class="number">37</span></span><br><span class="line">Keys: <span class="number">368</span>b7c25 d8b6163f d5c85e0b</span><br><span class="line"><span class="number">67.9</span> % (<span class="number">2849334</span> / <span class="number">4194304</span>)</span><br><span class="line">Found a solution. Stopping.</span><br><span class="line">You may resume the attack with the option: <span class="literal">--continue-attack</span> <span class="number">2849334</span></span><br><span class="line">[<span class="number">00</span>:<span class="number">36</span>:<span class="number">37</span>] Keys</span><br><span class="line"><span class="number">368</span>b7c25 d8b6163f d5c85e0b</span><br><span class="line">&gt; bkcrack <span class="literal">-C</span> Secret.zip <span class="literal">-c</span> Document.zip <span class="literal">-k</span> <span class="number">368</span>b7c25 d8b6163f d5c85e0b <span class="literal">-d</span> Document.zip</span><br><span class="line">bkcrack <span class="number">1.6</span>.<span class="number">1</span> - <span class="number">2024</span><span class="literal">-01-22</span></span><br><span class="line">[<span class="number">00</span>:<span class="number">40</span>:<span class="number">48</span>] Writing deciphered <span class="keyword">data</span> Document.zip (maybe compressed)</span><br><span class="line">Wrote deciphered <span class="keyword">data</span>.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Document.zip需要密码，输入等凉了的7dd5c046fdb876f6351f4e04e8b43a20，解压成功，获得flag：</p>
+<p>rwctf{58efb2e01a57e38359398ccb5ee7281707fa91a78e1704755e61e62a7e054445}</p>
+<p><img src="/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/result.png"></p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/01/28/Writeup-RealWorldCTF2024-The-truth-of-Plain/" data-id="cm9ilnvav0004vsi72ng90gh3" data-title="Writeup-RealWorldCTF2024-The-truth-of-Plain" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Crypto/" rel="tag">Crypto</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Misc/" rel="tag">Misc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/ctf/" rel="tag">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/rwctf2024/" rel="tag">rwctf2024</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/writeup/" rel="tag">writeup</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../../03/23/ViTPose%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ViTPose笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../../../2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Sektor7-Evasion Windows RTOps笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/blog/">blog</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Crypto/" rel="tag">Crypto</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Misc/" rel="tag">Misc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/debug/" rel="tag">debug</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/env-build/" rel="tag">env_build</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/evasion/" rel="tag">evasion</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/heap/" rel="tag">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/model-train/" rel="tag">model_train</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/note/" rel="tag">note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/paper-note/" rel="tag">paper_note</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/pose-estimation/" rel="tag">pose_estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ptmalloc/" rel="tag">ptmalloc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/rwctf2024/" rel="tag">rwctf2024</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/transformer/" rel="tag">transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/windows/" rel="tag">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/writeup/" rel="tag">writeup</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="../../../../tags/Crypto/" style="font-size: 10px;">Crypto</a> <a href="../../../../tags/Misc/" style="font-size: 10px;">Misc</a> <a href="../../../../tags/ctf/" style="font-size: 10px;">ctf</a> <a href="../../../../tags/debug/" style="font-size: 10px;">debug</a> <a href="../../../../tags/env-build/" style="font-size: 10px;">env_build</a> <a href="../../../../tags/evasion/" style="font-size: 10px;">evasion</a> <a href="../../../../tags/heap/" style="font-size: 10px;">heap</a> <a href="../../../../tags/kernel/" style="font-size: 10px;">kernel</a> <a href="../../../../tags/linux/" style="font-size: 10px;">linux</a> <a href="../../../../tags/model-train/" style="font-size: 10px;">model_train</a> <a href="../../../../tags/note/" style="font-size: 20px;">note</a> <a href="../../../../tags/paper-note/" style="font-size: 10px;">paper_note</a> <a href="../../../../tags/pose-estimation/" style="font-size: 10px;">pose_estimation</a> <a href="../../../../tags/ptmalloc/" style="font-size: 10px;">ptmalloc</a> <a href="../../../../tags/rwctf2024/" style="font-size: 10px;">rwctf2024</a> <a href="../../../../tags/transformer/" style="font-size: 10px;">transformer</a> <a href="../../../../tags/windows/" style="font-size: 10px;">windows</a> <a href="../../../../tags/writeup/" style="font-size: 10px;">writeup</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/06/">June 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2022/10/">October 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../06/01/%E5%AE%89%E8%A3%85bcc%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">安装bcc和bpftrace踩坑记录</a>
+          </li>
+        
+          <li>
+            <a href="../../../04/25/%E8%AE%AD%E7%BB%83%E7%BB%8F%E9%AA%8C%E6%91%98%E5%BD%95%20996efa07914a43b68886a10868d83e1d/">训练经验摘录</a>
+          </li>
+        
+          <li>
+            <a href="../../../03/23/ViTPose%E7%AC%94%E8%AE%B0/">ViTPose笔记</a>
+          </li>
+        
+          <li>
+            <a href="">Writeup-RealWorldCTF2024-The-truth-of-Plain</a>
+          </li>
+        
+          <li>
+            <a href="../../../../2023/07/25/Sektor7-Evasion%20Windows%20RTOps%E7%AC%94%E8%AE%B0/">Sektor7-Evasion Windows RTOps笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../../js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="../../../../fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="../../../../js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
